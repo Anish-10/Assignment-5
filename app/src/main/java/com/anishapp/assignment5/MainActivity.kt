@@ -11,104 +11,126 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
+import java.time.Month
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var etDoj:EditText
     private lateinit var etDob:EditText
-    private lateinit var btnSubmit:Button
     private lateinit var tvDoj:TextView
     private lateinit var tvDob:TextView
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         etDoj=findViewById(R.id.etDoj)
         etDob=findViewById(R.id.etDob)
-        btnSubmit=findViewById(R.id.btnSubmit)
-        tvDoj=findViewById(R.id.tvDoj)
         tvDob=findViewById(R.id.tvDob)
 
-        etDoj.setOnClickListener {
-            workingYears()
+        val currentDate=SimpleDateFormat("dd").format(System.currentTimeMillis()).toInt()
+        val currentMonth=SimpleDateFormat("MM").format(System.currentTimeMillis()).toInt()
+        val currentYear=SimpleDateFormat("yyyy").format(System.currentTimeMillis()).toInt()
+
+        fun workingYears(year:Int, month:Int, dayOfMonth:Int):String {
+            var modCurrentDate=currentDate
+            var modCurrentMonth=currentMonth
+            var modCurrentYear=currentYear
+            val ageDay:Int
+            val ageMonth:Int
+            val ageYear:Int
+
+            if (dayOfMonth > modCurrentDate)
+            {
+                modCurrentDate +=31
+                modCurrentMonth -=1
+                ageDay = modCurrentDate - dayOfMonth
+            }
+            else
+            {
+                ageDay = modCurrentDate - dayOfMonth
+            }
+
+            if (month > modCurrentMonth)
+            {
+                modCurrentMonth +=12
+                modCurrentYear -=1
+                ageMonth = modCurrentMonth - month
+            }
+            else
+            {
+                ageMonth = modCurrentMonth - month
+            }
+            ageYear = modCurrentYear - year
+
+            return "No. of years worked: " + ageYear.toString() + " years " + ageMonth.toString() + " months " + ageDay.toString() + " days"
         }
+
+        tvDoj=findViewById(R.id.tvDoj)
+        val datePickerDialog=DatePickerDialog(this,
+        DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+            etDoj.setText("$dayOfMonth-${month + 1}-$year")
+            tvDoj.text=workingYears(year, month+1, dayOfMonth)
+        },
+        currentYear,
+        currentMonth-1,
+        currentDate
+        )
+
+        etDoj.setOnClickListener {
+            datePickerDialog.show()
+        }
+
+        fun age(year:Int, month:Int, dayOfMonth:Int):String {
+            var modCurrentDate=currentDate
+            var modCurrentMonth=currentMonth
+            var modCurrentYear=currentYear
+            val ageDay:Int
+            val ageMonth:Int
+            val ageYear:Int
+
+            if (dayOfMonth > modCurrentDate)
+            {
+                modCurrentDate +=31
+                modCurrentMonth -=1
+                ageDay = modCurrentDate - dayOfMonth
+            }
+            else
+            {
+                ageDay = modCurrentDate - dayOfMonth
+            }
+
+            if (month > modCurrentMonth)
+            {
+                modCurrentMonth +=12
+                modCurrentYear -=1
+                ageMonth = modCurrentMonth - month
+            }
+            else
+            {
+                ageMonth = modCurrentMonth - month
+            }
+            ageYear = modCurrentYear - year
+
+            return "Your Age is: " + ageYear.toString() + " years " + ageMonth.toString() + " months " + ageDay.toString() + " days"
+        }
+
+        tvDob=findViewById(R.id.tvDob)
+        val datePickerDialog1=DatePickerDialog(this,
+                DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                    etDob.setText("$dayOfMonth-${month + 1}-$year")
+                    tvDob.text = age(year, month + 1, dayOfMonth)
+                },
+                currentYear,
+                currentMonth - 1,
+                currentDate
+        )
 
         etDob.setOnClickListener {
-            age()
-        }
-
-        btnSubmit.setOnClickListener {
-            calcAge()
-            calcWorkingYears()
+            datePickerDialog1.show()
         }
     }
 
-    private fun age()
-    {
-        val c=Calendar.getInstance()
-        val year=c.get(Calendar.YEAR)
-        val month=c.get(Calendar.MONTH)
-        val day=c.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog=DatePickerDialog(this,
-                DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-                    etDob.setText("$dayOfMonth-${month+1}-$year")
-                },
-                year,
-                month,
-                day
-        )
-        datePickerDialog.show()
-    }
-
-    private fun workingYears()
-    {
-        val c=Calendar.getInstance()
-        val year=c.get(Calendar.YEAR)
-        val month=c.get(Calendar.MONTH)
-        val day=c.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog=DatePickerDialog(this,
-                DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-                    etDoj.setText("$dayOfMonth-${month+1}-$year")
-                },
-                year,
-                month,
-                day
-        )
-        datePickerDialog.show()
-    }
-
-    private fun calcAge()
-    {
-        val today=Date()
-        val dobs=etDob.text.toString()
-        val sdf=SimpleDateFormat("dd-mm-yyyy")
-        val dob=sdf.parse(dobs)
-
-        val years=(today.time-dob.time)/31540000000
-        val months=(today.time-dob.time)/2628000000
-        val days=(today.time-dob.time)/86400000
-
-        tvDob.text="Your Age is: $years years "
-
-    }
-
-    private fun calcWorkingYears()
-    {
-        val today=Date()
-        val dojs=etDoj.text.toString()
-        val sdf=SimpleDateFormat("dd-mm-yyyy")
-        val doj=sdf.parse(dojs)
-
-        val years=(today.time-doj.time)/31540000000
-        val months=(today.time-doj.time)/2628000000
-        val days=(today.time-doj.time)/86400000
-
-        tvDoj.text="No. of worked years: $years years "
-
-    }
 }

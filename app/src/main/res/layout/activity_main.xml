@@ -31,16 +31,6 @@
             android:layout_margin="10dp"
             android:textColor="@color/black"/>
 
-        <Button
-            android:id="@+id/btnSubmit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Submit"
-            android:textSize="25sp"
-            android:layout_margin="10dp"
-            android:backgroundTint="@android:color/holo_red_dark"/>
-
         <TextView
             android:id="@+id/tvDoj"
             android:layout_width="match_parent"
